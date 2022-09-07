@@ -1,4 +1,4 @@
-const g_socket = io('https://tetris-multiplayer-1vs1.herokuapp.com/'); // socket
+const g_socket = io(); // socket
 g_socket.on('room-is-full', () => {
     alert("ROOM is FULL \n For now you can play single player only!  \n Please try again later!");
 })
