@@ -1,12 +1,18 @@
-const http = require('http');
+// const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 
-const app = express();
+// const app = express();
 
-app.use(express.static(`${__dirname}/../public`));
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
 
-const server = http.createServer(app);
+const server = express()
+    .use((req, res) => res.sendFile(INDEX, { root: `${__dirname}/../public` }))
+    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+// app.use(express.static(`${__dirname}/../public`));
+
 const io = socketio(server);
 
 //Initialising number of users for the DEFAULT room
@@ -30,7 +36,7 @@ io.on('connection', (socket) => {
     //Update the enemy board
     socket.on('update-board', (canvas) => {
         if([...socket.rooms][1] === "default")
-        socket.to("default").emit('update-board', canvas);
+            socket.to("default").emit('update-board', canvas);
     })
 
     //Update the number of users when someone disconnects
@@ -41,11 +47,11 @@ io.on('connection', (socket) => {
 });
 
 
-
-server.on("error", (err) => {
-    console.error(err);
-});
-
-server.listen(process.env.PORT || 3000, () => {
-    console.log("Listening on port 3000...");
-});
+//
+// server.on("error", (err) => {
+//     console.error(err);
+// });
+//
+// server.listen(process.env.PORT || 3000, () => {
+//     console.log("Listening on port 3000...");
+// });
