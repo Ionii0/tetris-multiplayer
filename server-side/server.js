@@ -4,9 +4,15 @@ const socketio = require('socket.io');
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+const server = express()
+    .use((req, res) => res.sendFile(INDEX, { root: `${__dirname}/../public` }))
+    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
 app.use(express.static(`${__dirname}/../public`));
 
-const server = http.createServer(app);
 const io = socketio(server);
 
 //Initialising number of users for the DEFAULT room
