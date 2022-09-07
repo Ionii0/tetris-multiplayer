@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "start": "node server-side/server.js"
+    "heroku-prebuild": "cd server-side && npm install && npm run build ",
+    "start": "cd server-side && npm start"
   }
 }
