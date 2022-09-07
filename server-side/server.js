@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 
 const app = express();
 
-app.use(express.static(`../public`));
+app.use(express.static(`${__dirname}/../public`));
 
 const server = http.createServer(app);
 const io = socketio(server);
