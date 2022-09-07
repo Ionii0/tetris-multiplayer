@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
 const server = express()
-    .use((req, res) => res.sendFile(INDEX, { root: `../public` }))
+    .use((req, res) => res.sendFile(INDEX, { root: `../../public` }))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // app.use(express.static(`${__dirname}/../public`));
