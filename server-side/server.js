@@ -1,15 +1,18 @@
-const http = require('http');
-const express = require('express');
-const socketio = require('socket.io');
-
-const app = express();
-
-app.use(express.static(`${__dirname}/../public`));
-
-const server = http.createServer(app);
-const io = socketio(server);
+// const http = require('http');
+// const express = require('express');
+// const socketio = require('socket.io');
+//
+// const app = express();
+//
+// app.use(express.static(`${__dirname}/../public`));
+//
+// const server = http.createServer(app);
+// const io = socketio(server);
 
 //Initialising number of users for the DEFAULT room
+
+const io = require('socket.io')();
+
 let numberOfUsers = 0;
 
 io.on('connection', (socket) => {
@@ -40,12 +43,13 @@ io.on('connection', (socket) => {
     })
 });
 
+io.listen(process.env.PORT || 3000);
 
-
-server.on("error", (err) => {
-    console.error(err);
-});
-
-server.listen(process.env.PORT || 3000, () => {
-    console.log("Listening on port 3000...");
-});
+//
+// server.on("error", (err) => {
+//     console.error(err);
+// });
+//
+// server.listen(process.env.PORT || 3000, () => {
+//     console.log("Listening on port 3000...");
+// });
