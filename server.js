@@ -1,18 +1,12 @@
-// const http = require('http');
+const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 
-// const app = express();
+const app = express();
 
-const PORT = process.env.PORT || 3000;
-const INDEX = '/index.html';
+app.use(express.static(`${__dirname}/public`));
 
-const server = express()
-    .use((req, res) => res.sendFile(INDEX, { root: `${__dirname}/public` }))
-    .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-// app.use(express.static(`${__dirname}/../public`));
-
+const server = http.createServer(app);
 const io = socketio(server);
 
 //Initialising number of users for the DEFAULT room
@@ -47,11 +41,11 @@ io.on('connection', (socket) => {
 });
 
 
-//
-// server.on("error", (err) => {
-//     console.error(err);
-// });
-//
-// server.listen(process.env.PORT || 3000, () => {
-//     console.log("Listening on port 3000...");
-// });
+
+server.on("error", (err) => {
+    console.error(err);
+});
+
+server.listen(process.env.PORT || 3000, () => {
+    console.log("Listening on port 3000...");
+});
