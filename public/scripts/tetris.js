@@ -16,7 +16,6 @@ const ROW = 20;// number of rows
 const COL = 10;//number of columns
 const SQUARE_LENGTH = 20; // 20x20 px square
 const EMPTY = "BLACK";
-let g_gameOver = false;
 
 //------------------ RUN GAME ---------------------
 let pieceObj0 = generatePiece();
@@ -24,13 +23,15 @@ let boardObj0 = new Board(ctx, pieceObj0, SQUARE_LENGTH, ROW, COL, PIECES, COLOR
 boardObj0.drawBoard();
 boardObj0.drawNextBoard();
 boardObj0.drawNextPiece();
-document.addEventListener("keydown", function (e) {
-    boardObj0.movePiece(e);
-});
+document.addEventListener("keydown", function (e) {boardObj0.movePiece(e);});
+
+//Reset button
+function reset(){
+    boardObj0.resetGame();
+}
+
 //using set timeout in order to give it time for initialisation
-setTimeout(() => {
-    boardObj0.run();
-}, 1000)
+setTimeout(() => {boardObj0.run();}, 1000)
 g_socket.on('update-board', (enemyBoard) => {
     console.log("Received board");
     let img = new Image();

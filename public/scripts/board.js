@@ -17,6 +17,7 @@ class Board {
         this.nextPieceBoard = [];
         this.dropBeginsAt = Date.now();
         this.score = 0;
+        this.gameOver = false;
         this.nextPiece = this.generatePiece();
         this.initBoard();
         this.initNextPieceBoard();
@@ -48,6 +49,15 @@ class Board {
         }
     }
 
+    resetBoard() {
+        this.initBoard()
+        for (let row = 0; row < this.row; row++) {
+            for (let col = 0; col < this.col; col++) {
+                this.drawSquare(col, row, this.empty);
+            }
+        }
+    }
+
     drawTetromino() {
         for (let row = 0; row < this.tetromino.currentTetromino.length; row++) {
             for (let col = 0; col < this.tetromino.currentTetromino.length; col++) {
@@ -65,6 +75,12 @@ class Board {
             }
         }
     }
+
+    drawGameOver() {
+        this.ctx.font = "32px Poppins";
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText("Game Over!", 15, this.ctx.canvas.height / 2);
+    };
 
     //PIECE MOVEMENT
     moveTetrominoDown() {
@@ -128,8 +144,9 @@ class Board {
                     continue;
                 }
                 if (this.tetromino.posY + row < 0) {
+                    this.gameOver = true;
                     alert("Game Over!");
-                    g_gameOver = true;
+                    this.drawGameOver();
                     break;
                 }
                 this.board[this.tetromino.posY + row][this.tetromino.posX + col] = this.tetromino.color;
@@ -179,40 +196,43 @@ class Board {
     }
 
     movePiece(event) {
-        switch (event.keyCode) {
-            case 37:
-                this.moveTetrominoLeft();
-                break;
-            case 38:
-                this.rotateTetromino();
-                break;
-            case 39:
-                this.moveTetrominoRight()
-                break;
-            case 40:
-                this.moveTetrominoDown()
-                break;
+        if (!this.gameOver) {
+            switch (event.keyCode) {
+                case 37:
+                    this.moveTetrominoLeft();
+                    break;
+                case 38:
+                    this.rotateTetromino();
+                    break;
+                case 39:
+                    this.moveTetrominoRight()
+                    break;
+                case 40:
+                    this.moveTetrominoDown()
+                    break;
+            }
         }
     }
 
 //RUN
     run() {
-        const data = {boardCanvas: this.ctx.canvas.toDataURL(), boardScore: this.score};
-        g_socket.emit('update-board', data);
-        let now = Date.now();
-        let deltaTime = now - this.dropBeginsAt;
-        let speedModifier = getSpeed(this.score);
-        if (deltaTime > 1000 * speedModifier) {
-            this.moveTetrominoDown();
-            this.dropBeginsAt = Date.now();
-        }
-        if (!g_gameOver)
+        if (!this.gameOver) {
+            const data = {boardCanvas: this.ctx.canvas.toDataURL(), boardScore: this.score};
+            g_socket.emit('update-board', data);
+            let now = Date.now();
+            let deltaTime = now - this.dropBeginsAt;
+            let speedModifier = getSpeed(this.score);
+            if (deltaTime > 1000 * speedModifier) {
+                this.moveTetrominoDown();
+                this.dropBeginsAt = Date.now();
+            }
             requestAnimationFrame(() => {
                 this.run(this)
             });
+        } else this.drawGameOver();
     }
 
-    //NEXT PIECE
+//NEXT PIECE
     initNextPieceBoard() {
         for (let r = 0; r < this.rowNextPiece; r++) {
             this.nextPieceBoard[r] = [];
@@ -226,6 +246,15 @@ class Board {
         for (let row = 0; row < this.rowNextPiece; row++) {
             for (let col = 0; col < this.colNextPiece; col++) {
                 this.drawNextSquare(col, row, this.board[row][col]);
+            }
+        }
+    }
+
+    resetNextBoard() {
+        this.initNextPieceBoard();
+        for (let row = 0; row < this.rowNextPiece; row++) {
+            for (let col = 0; col < this.colNextPiece; col++) {
+                this.drawNextSquare(col, row, this.empty);
             }
         }
     }
@@ -258,7 +287,7 @@ class Board {
     }
 
 
-    //UTILS
+//UTILS
     generatePiece() {
         const randomSeed = Math.floor(Math.random() * this.pieces.length);
         return new Tetromino(this.pieces[randomSeed], this.generateColor());
@@ -267,5 +296,17 @@ class Board {
     generateColor() {
         const randomSeed = Math.floor(Math.random() * this.colors.length);
         return this.colors[randomSeed];
+    }
+
+    resetGame() {
+        this.score = 0;
+        this.gameOver = false;
+        this.tetromino = this.generatePiece();
+        this.nextPiece = this.generatePiece();
+
+        this.resetBoard();
+        this.resetNextBoard();
+        this.drawNextPiece();
+        this.run();
     }
 }
