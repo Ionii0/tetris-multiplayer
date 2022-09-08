@@ -214,24 +214,6 @@ class Board {
         }
     }
 
-//RUN
-    run() {
-        if (!this.gameOver) {
-            const data = {boardCanvas: this.ctx.canvas.toDataURL(), boardScore: this.score};
-            g_socket.emit('update-board', data);
-            let now = Date.now();
-            let deltaTime = now - this.dropBeginsAt;
-            let speedModifier = getSpeed(this.score);
-            if (deltaTime > 1000 * speedModifier) {
-                this.moveTetrominoDown();
-                this.dropBeginsAt = Date.now();
-            }
-            requestAnimationFrame(() => {
-                this.run(this)
-            });
-        } else this.drawGameOver();
-    }
-
 //NEXT PIECE
     initNextPieceBoard() {
         for (let r = 0; r < this.rowNextPiece; r++) {
@@ -286,7 +268,6 @@ class Board {
         }
     }
 
-
 //UTILS
     generatePiece() {
         const randomSeed = Math.floor(Math.random() * this.pieces.length);
@@ -307,6 +288,26 @@ class Board {
         this.resetBoard();
         this.resetNextBoard();
         this.drawNextPiece();
+        this.scoreDiv.innerHTML = this.score.toString();
         this.run();
     }
+
+    //RUN
+    run() {
+        if (!this.gameOver) {
+            const data = {boardCanvas: this.ctx.canvas.toDataURL(), boardScore: this.score};
+            g_socket.emit('update-board', data);
+            let now = Date.now();
+            let deltaTime = now - this.dropBeginsAt;
+            let speedModifier = getSpeed(this.score);
+            if (deltaTime > 1000 * speedModifier) {
+                this.moveTetrominoDown();
+                this.dropBeginsAt = Date.now();
+            }
+            requestAnimationFrame(() => {
+                this.run(this)
+            });
+        } else this.drawGameOver();
+    }
+
 }

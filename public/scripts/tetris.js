@@ -18,25 +18,27 @@ const SQUARE_LENGTH = 20; // 20x20 px square
 const EMPTY = "BLACK";
 
 //------------------ RUN GAME ---------------------
-let pieceObj0 = generatePiece();
-let boardObj0 = new Board(ctx, pieceObj0, SQUARE_LENGTH, ROW, COL, PIECES, COLORS, EMPTY, g_scoreDiv, ctxNextPiece);
-boardObj0.drawBoard();
-boardObj0.drawNextBoard();
-boardObj0.drawNextPiece();
-document.addEventListener("keydown", function (e) {boardObj0.movePiece(e);});
+let g_pieceObj = generatePiece();
+let g_boardObj = new Board(ctx, g_pieceObj, SQUARE_LENGTH, ROW, COL,
+                           PIECES, COLORS, EMPTY, g_scoreDiv, ctxNextPiece);
+g_boardObj.drawBoard();
+g_boardObj.drawNextBoard();
+g_boardObj.drawNextPiece();
+document.addEventListener("keydown", function (e) {g_boardObj.movePiece(e);});
 
 //Reset button
 function reset(){
-    boardObj0.resetGame();
+    g_boardObj.resetGame();
 }
 
 //using set timeout in order to give it time for initialisation
-setTimeout(() => {boardObj0.run();}, 1000)
+setTimeout(() => {g_boardObj.run();}, 1000)
+
+//Update enemy board
 g_socket.on('update-board', (enemyBoard) => {
     console.log("Received board");
     let img = new Image();
     img.src = enemyBoard.boardCanvas;
     ctxEnemy.drawImage(img, 0, 0);
     g_scoreDivEnemy.innerHTML = enemyBoard.boardScore.toString();
-
 })
