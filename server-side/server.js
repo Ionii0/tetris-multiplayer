@@ -19,11 +19,10 @@ io.on('connection', (socket) => {
     if (numberOfUsersInRoom < 2) {
         socket.join(defaultRoom);
         numberOfUsersInRoom++;
+        socket.to("default").emit('1v1-game-started');
         console.log(`Socket id  ** ${socket.id} ** connected on room ${[...socket.rooms][1]}`);
     } else {
         socket.emit('room-is-full');
-        console.log("Room is full");
-
     }
 
     //Update the enemy board
@@ -35,7 +34,6 @@ io.on('connection', (socket) => {
     //Update the number of users when someone disconnects
     socket.on('disconnect', (socket) => {
         if (io.sockets.adapter.rooms.get(defaultRoom).size > numberOfUsersInRoom) {
-            console.log(`${socket.id} disconnected`);
             numberOfUsersInRoom--;
         }
     })

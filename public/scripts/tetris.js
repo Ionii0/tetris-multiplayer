@@ -20,19 +20,23 @@ const EMPTY = "BLACK";
 //------------------ RUN GAME ---------------------
 let g_pieceObj = generatePiece();
 let g_boardObj = new Board(ctx, g_pieceObj, SQUARE_LENGTH, ROW, COL,
-                           PIECES, COLORS, EMPTY, g_scoreDiv, ctxNextPiece);
+    PIECES, COLORS, EMPTY, g_scoreDiv, ctxNextPiece);
 g_boardObj.drawBoard();
 g_boardObj.drawNextBoard();
 g_boardObj.drawNextPiece();
-document.addEventListener("keydown", function (e) {g_boardObj.movePiece(e);});
+document.addEventListener("keydown", function (e) {
+    g_boardObj.movePiece(e);
+});
 
 //Reset button
-function reset(){
+function reset() {
     g_boardObj.resetGame();
 }
 
 //using set timeout in order to give it time for initialisation
-setTimeout(() => {g_boardObj.run();}, 1000)
+setTimeout(() => {
+    g_boardObj.run();
+}, 1000)
 
 //Update enemy board
 g_socket.on('update-board', (enemyBoard) => {
@@ -41,4 +45,9 @@ g_socket.on('update-board', (enemyBoard) => {
     img.src = enemyBoard.boardCanvas;
     ctxEnemy.drawImage(img, 0, 0);
     g_scoreDivEnemy.innerHTML = enemyBoard.boardScore.toString();
+})
+
+//Reset board when enemy joins room
+g_socket.on('1v1-game-started', () => {
+    g_boardObj.resetGame();
 })
