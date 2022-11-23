@@ -47,7 +47,10 @@ g_socket.on('update-board', (enemyBoard) => {
     g_scoreDivEnemy.innerHTML = enemyBoard.boardScore.toString();
 })
 
-//Reset board when enemy joins room
-g_socket.on('1v1-game-started', () => {
-    g_boardObj.resetGame();
-})
+setTimeout(() => {
+    //Reset board when enemy joins room
+    g_socket.on('1v1-game-started', () => {
+        g_boardObj.resetGame();
+    })
+}, 2000);
+
