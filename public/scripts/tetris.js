@@ -31,12 +31,12 @@ document.addEventListener("keydown", function (e) {
 //Reset button
 function reset() {
     g_boardObj.resetGame();
-}
+};
 
 //using set timeout in order to give it time for initialisation
 setTimeout(() => {
     g_boardObj.run();
-}, 1000)
+}, 1000);
 
 //Update enemy board
 g_socket.on('update-board', (enemyBoard) => {
@@ -45,12 +45,9 @@ g_socket.on('update-board', (enemyBoard) => {
     img.src = enemyBoard.boardCanvas;
     ctxEnemy.drawImage(img, 0, 0);
     g_scoreDivEnemy.innerHTML = enemyBoard.boardScore.toString();
-})
+});
 
-setTimeout(() => {
-    //Reset board when enemy joins room
-    g_socket.on('1v1-game-started', () => {
-        g_boardObj.resetGame();
-    })
-}, 2000);
-
+//Reset board when enemy joins room
+g_socket.on('1v1-game-started', () => {
+    g_boardObj.resetGame();
+});
